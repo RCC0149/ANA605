@@ -1,0 +1,303 @@
+---
+title: "Week 2 Assignment"
+author: "Randall Crawford"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+---
+
+### Getting Started
+```{r Getting Started, include=FALSE}
+library(knitr)
+library(dplyr) 
+library(ggplot2)
+library(ggformula)
+library(supernova)
+library(lsr)
+library(mosaic)
+library(tidyverse)
+library(data.table)
+```
+### knitr Chunk Functionality
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Load Data
+Great! Now load the data
+```{r Load Data}
+myDataLocation <- "C:\\Program Files\\R\\ANA 605\\R Data\\Assignment 2"
+setwd(myDataLocation)
+sim_data <- read.csv(file = "sim_data.csv", header = TRUE)
+'dim(sim_data)'
+```
+### QUESTION 1.	One Sample
+#### A. Plot a histogram of age for the first sample (the first column) of 100 students with a vertical line of the mean.
+```{r QUESTION 1, echo=FALSE}
+favstats(sim_data$X1)
+```
+```{r, echo=FALSE}
+gf_histogram(~ X1, data = sim_data, fill = "green", color = "black", linewidth = 0.5, bins = 22, title = "Age Histogram of Sample X1", ylim = c(0,20), xlim = c(20,45)) %>%
+  gf_vline(xintercept = mean(sim_data$X1), color = "red", linewidth = 1) + scale_y_continuous("Student Count", breaks = breaks_pretty(n=10)) + scale_x_continuous("Age", breaks = breaks_pretty(n=10))
+```
+
+#### B.	Describe the shape of the distribution.
+
+The shape of the sample distribution appears to be mostly uni-modal with a notable apex at the mode (28), and there are number of potential outliers, indicating some Kurtosis present in the sample distribution. The mode is less than the median (30) that is less than the mean (31.1), indicating a right skew to the sample distribution.
+
+#### C.	What does the y-axis represent?
+
+The y-axis represents the count of students at a particular age in the sample.
+
+#### D.	What is the mean age for the sample?
+
+The mean of the sample is 31.1 years of age.
+
+#### E.	What is the standard deviation of age for the sample?
+
+The standard deviation of the sample is 4.140219 years of age.
+
+### QUESTION 2
+#### Calculate the mean ages for each sample, using the R function, apply(). You will need to figure out what values to put in for the three arguments, X, MARGIN, and FUN. Save the 1,000 means in a vector of age means.
+The `apply(X, MARGIN, FUN, ...)` function in R is a versatile and powerful function used to apply a function to the margins of an array (e.g., matrix) or a data frame. It allows you to perform operations such as calculations, summaries, or transformations on rows, columns, or both of these structures.
+
+- `X`: is an array (i.e. matrix) or a data frame
+
+- `MARGIN`: specifies the dimension over which the function will be applied. It can take values:
+
+  - 1: apply the function to each row
+
+  - 2: apply the function to each column
+
+  - c(1,2): apply the function to both rows and columns
+
+- `FUN`: is the function to be applied. This can be any R function or a custom-defined function.
+
+- `...`: Any additional arguments to be passed to the function specified in `FUN`.
+
+```{r}
+age_means <- apply(X = sim_data, MARGIN = 2, FUN = mean)
+age_means.df <- data.frame(age_means)
+```
+
+#### A. Plot a histogram of the age means with a vertical line at the mean.
+```{r QUESTION 2A, echo=FALSE}
+gf_histogram(~ age_means, data = age_means.df, fill = "green", color = "black", linewidth = 0.5, bins = 22, title = "Age Histogram of Sample X Means", ylim = c(0,120), xlim = c(25,40)) %>%
+  gf_vline(xintercept = mean(age_means), color = "red", linewidth = 1) + scale_y_continuous("Count of Sample Means", breaks = breaks_pretty(n=10)) + scale_x_continuous("Sample Mean Age", breaks = breaks_pretty(n=10))
+```
+
+#### B.	Describe the shape of the distribution.
+
+The shape of the sample mean distribution looks reasonably normal.
+
+#### C.	What does the y-axis represent?
+
+The y-axis represents the count of sample means at a particular age in the sample mean distribution.
+
+#### D.	What is the mean of the sampling distribution of means?
+```{r QUESTION 2D, echo=FALSE}
+grand_mean = mean(age_means)
+cat("The mean of the sampling distribution of means equals", grand_mean, '\n')
+```
+
+#### E.	What is the standard error of the mean?
+``` {r QUESTION 2E, echo=FALSE}
+std_err = sd(age_means)
+cat("The standard error of the mean equals", std_err, '\n')
+```
+
+#### F.	What notation would you use to describe the mean and standard error from 2.d-e?
+$$
+Y_i = b_0 + e_i
+$$
+
+$$
+Y_i = 31.4417 + 1.250398e_i
+$$
+
+### 3. QUESTION 3
+#### Calculate the standard deviation for each sample, using the R function, apply(). You will need to figure out what values to put in for the three arguments, X, MARGIN, and FUN. Save the result in vector of age standard deviations.
+```{r}
+age_stds <- apply(X = sim_data, MARGIN = 2, FUN = sd)
+age_stds.df <- data.frame(age_stds)
+```
+
+#### A. Plot a histogram of the age standard deviations with a vertical line at the mean.
+```{r QUESTION 3A, echo=FALSE}
+gf_histogram(~ age_stds, data = age_stds.df, fill = "green", color = "black", linewidth = 0.5, bins = 32, title = "Age Histogram of Sample X Standard Deviations", ylim = c(0,110), xlab = "Sample Age Standard Deviation") %>%
+  gf_vline(xintercept = mean(age_stds), color = "red", linewidth = 1) + scale_y_continuous("Count of Sample Standard Deviations", breaks = breaks_pretty(n=10))
+```
+
+#### B. Describe the shape of the distribution.
+
+The shape of the sample standard deviation distribution looks reasonably normal.
+
+#### C. What does the y-axis represent?
+
+The y-axis represents the count of sample standard deviations at a sample age standard deviation in the sample standard deviation distribution.
+
+#### D. What is the mean of the sampling distribution of the standard deviations?
+```{r QUESTION 3D, echo=FALSE}
+stddev_mean = mean(age_stds)
+cat("The mean of the sampling distribution of standard deviations equals", stddev_mean, '\n')
+```
+
+#### E. What is the standard error of the standard deviations?
+``` {r QUESTION 3E, echo=FALSE}
+stddev_err = sd(age_stds)
+cat("The standard error of the standard deviations equals", stddev_err, '\n')
+```
+
+#### F. What notation would you use to describe the mean and standard error from 3.d-e?
+$$
+Y_i = b_0 + e_i
+$$
+
+$$
+Y_i = 3.990663 + 0.2763994e_i
+$$
+
+### QUESTION 4: According to your findings from Q1-Q3...
+#### A. What is your best estimate of the population mean? Why?
+```{r QUESTION 4A, echo=FALSE}
+cat("The best estimate of the population mean equals", grand_mean, '\n')
+```
+ This mean was derived from 1000 group means from 100 samples each in the provided dataset.  
+   
+#### B. What is your best estimate of the population standard deviation? Why?
+```{r QUESTION 4B, echo=FALSE}
+cat("The best estimate of the population standard deviation equals", stddev_mean, '\n')
+```
+This standard deviation was the mean of 1000 group standard deviations from 100 samples each in the dataset.
+
+### For the following questions, use your best estimates of the population mean and standard deviation (Q4).  
+
+### QUESTION 5: Simulate the sampling distribution of the mean with 100 samples of 10 students each. 
+``` {r QUESTION 5, echo = FALSE}
+Q5 <- do(100) * rnorm(10, mean = grand_mean, sd = stddev_mean)
+Q5_age_means <- apply(X = Q5, MARGIN = 1, FUN = mean)
+Q5_age_means.df <- data.frame(Q5_age_means)
+```
+
+#### A. Plot a histogram of the age means with a vertical line at the mean.
+``` {r QUESTION 5A, echo = FALSE}
+gf_histogram(~ Q5_age_means, data = Q5_age_means.df, fill = "green", color = "black", linewidth = 0.5, bins = 10, title = "Age Histogram of Q5 Sample Mean Ages", ylim = c(0,30), xlim = c(25,40)) %>%
+  gf_vline(xintercept = mean(Q5_age_means), color = "red", linewidth = 1) + scale_y_continuous("Count of Sample Means", breaks = breaks_pretty(n=10)) + scale_x_continuous("Sample Mean Age", breaks = breaks_pretty(n=10))
+```
+
+#### B. What is the mean of the sampling distribution of the means?
+``` {r QUESTION 5B, echo=FALSE}
+cat("The mean of the sampling distribution of the means equals", mean(Q5_age_means), '\n')
+```
+
+#### C. What is the standard error of the mean?
+``` {r QUESTION 5C, echo=FALSE}
+cat("The standard error of the mean equals", sd(Q5_age_means), '\n')
+```
+
+### QUESTION 6: Repeat the simulation in Q5, but instead of 100 samples, get 1,000 samples. 
+``` {r QUESTION 6, echo = FALSE}
+Q6 <- do(1000) * rnorm(10, mean = grand_mean, sd = stddev_mean)
+Q6_age_means <- apply(X = Q6, MARGIN = 1, FUN = mean)
+Q6_age_means.df <- data.frame(Q6_age_means)
+```
+
+#### A. Plot a histogram of the age means with a vertical line at the mean.
+``` {r QUESTION 6A, echo = FALSE}
+gf_histogram(~ Q6_age_means, data = Q6_age_means.df, fill = "green", color = "black", linewidth = 0.5, bins = 10, title = "Age Histogram of Q6 Sample Mean Ages", ylim = c(0,350), xlim = c(25,40)) %>%
+  gf_vline(xintercept = mean(Q6_age_means), color = "red", linewidth = 1) + scale_y_continuous("Count of Sample Means", breaks = breaks_pretty(n=10)) + scale_x_continuous("Sample Mean Age", breaks = breaks_pretty(n=10))
+```
+
+#### B. What is the mean of the sampling distribution of the means?
+``` {r QUESTION 6B, echo=FALSE}
+cat("The mean of the sampling distribution of the means equals", mean(Q6_age_means), '\n')
+```
+
+#### C. What is the standard error of the mean?
+``` {r QUESTION 6C, echo=FALSE}
+cat("The standard error of the mean equals", sd(Q6_age_means), '\n')
+```
+
+#### D. What happened to the standard error of the mean, compared to the simulation with 100 samples for 10 students in Q5? 
+
+The Q6 standard error of the mean decreased in comparison to Q5.
+
+##### i. Why do you believe this happened?
+
+In Q6, the sample size was increased by 10 times that of Q5.
+
+### QUESTION 7: Repeat the simulation in Q5, but instead of 10 students per sample, get 1,000 students. 
+``` {r QUESTION 7, echo = FALSE}
+Q7 <- do(100) * rnorm(1000, mean = grand_mean, sd = stddev_mean)
+Q7_age_means <- apply(X = Q7, MARGIN = 1, FUN = mean)
+Q7_age_means.df <- data.frame(Q7_age_means)
+```
+
+#### A. Plot a histogram of the age means with a vertical line at the mean.
+``` {r QUESTION 7A, echo = FALSE}
+gf_histogram(~ Q7_age_means, data = Q7_age_means.df, fill = "green", color = "black", linewidth = 0.5, bins = 10, title = "Age Histogram of Q7 Sample Mean Ages", ylim = c(0,10), xlim = c(25,40)) %>%
+  gf_vline(xintercept = mean(Q7_age_means), color = "red", linewidth = 1) + scale_y_continuous("Count of Sample Means", breaks = breaks_pretty(n=10)) + scale_x_continuous("Sample Mean Age", breaks = breaks_pretty(n=10))
+```
+
+#### B. What is the mean of the sampling distribution of the means?
+``` {r QUESTION 7B, echo=FALSE}
+cat("The mean of the sampling distribution of the means equals", mean(Q7_age_means), '\n')
+```
+
+#### C. What is the standard error of the mean?
+``` {r QUESTION 7C, echo=FALSE}
+cat("The standard error of the mean equals", sd(Q7_age_means), '\n')
+```
+
+#### D. What happened to the standard error of the mean, compared to the simulation with 100 samples for 10 students in Q5?
+
+The Q7 standard error of the mean significantly decreased in comparison to Q5.
+
+##### i. Why do you believe this happened?
+
+In Q7, the number of students was increased by 100 times than that of Q5.
+
+#### E. What happened to the standard error of the mean, compared to the simulation with 1,000 samples for 10 students in Q6?
+
+The Q7 standard error of the mean significantly decreased in comparison to Q6.
+
+##### i. Why do you believe this happened?
+
+In Q7, the number of students was increased by 100 times than that of Q6.
+
+### QUESTION 8: Looking back at your histograms (except Q3)...
+#### A. Which histogram has the most spread?
+
+The Q1 histogram had the most spread.
+
+#### B. How can you tell?
+
+The range of age values went from 22 to 43, and a 4.140219 standard deviation. Both considerably larger than the other histograms.
+
+#### C. Why is this so?
+
+The Q1 histogram was derived from one group (X1) of 100 samples, and all of the other histograms were derived from means of at least 100 groups of at least 10 samples.  
+
+### QUESTION 9: Considering the estimates of the population mean from Q2, Q5, Q6, and Q7...
+#### A. Which estimate would you trust most? Why?
+
+I would trust the Q7 estimated population mean.  Even though the Q2 population mean was derived from 1000 group means from 100 samples each, and was based on the provided dataset. The Q7 population mean was derived from 100 group means from 1000 samples each, and was generated from the Q2 population mean and standard error, yielding a much tighter standard error.
+
+#### B. Which estimate would you trust least? Why?
+
+I would trust Q5 estimated population mean the least.  The Q5 population mean was derived from 100 group means from 10 samples each, and was generated from the Q2 population mean and standard error. Given it only accounts for 100 x 10 or 1,000 samples compared to a dataset possessing 100,000 samples, a 1% sample seems hardly sufficient to estimate the population mean, especially when Q2 and Q7 cover the whole 100,000 samples, and Q6 covers 10,000.
+
+### QUESTION 10: Do you believe the sample mean and standard deviation you obtained in Q1 (for one sample) was a good estimate of the population mean and standard deviation? Why or why not?
+
+No, the sample mean and standard deviation was derived from only one group (X1) of 100 samples, when there were 1,000 groups in the dataset.
+
+### QUESTION 11: Write the R code to generate a random sample of 100 coin flips from a coin where the probability of heads is twice as likely as tails.
+```{r QUESTION 11}
+coin_flips <- rbinom(100, 1, p = c(0.6667))
+name_tab <- ftable(coin_flips)
+flip_tab <- data.table(name_tab)
+flip_tab$coin_flips <- factor(flip_tab$coin_flips, levels = c(0,1), labels = c("Tails", "Heads"))
+flip_tab
+```
+
+### End.
+

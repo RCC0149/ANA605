@@ -1,0 +1,322 @@
+---
+title: "Final Exam"
+author: "Randall Crawford"
+date: "11/24/2024"
+output: word_document
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r Getting Started, include=FALSE}
+# Load and install required packages
+library(knitr)
+library(mosaic)
+library(effsize)
+library(supernova)
+library(lsr)
+library(dplyr)
+library(ggplot2)
+library(ggformula)
+library(data.table)
+library(readxl)
+```
+
+```{r setup, include=FALSE}
+# knitr Chunk Functionality
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load data, include=FALSE}
+# Load in a dataset.
+final_data <- read_excel(path = "C:\\Program Files\\R\\ANA 605\\R Data\\Final Exam\\FinalProjectData.xlsx", col_names = TRUE)
+final_data
+```
+
+```{r view data, include=FALSE}
+# View the dataset.
+str(final_data)
+```
+
+```{r}
+# Descriptive Statistics for Dilomatox Weekly Product Revenues and Advertising Expenses
+favstats(final_data$DilomRev)
+
+gf_histogram(~ DilomRev, data = final_data, fill = "green", color = "black", linewidth = 0.5, bins = 12, title = "Dilomatox Weekly Product Revenue Histogram with Boxplot Overlay") %>%
+  gf_boxplot(fill = "purple", width = 1, color = "black", linewidth = 1.5) %>%
+  gf_vline(xintercept = mean(final_data$DilomRev) + sd(final_data$DilomRev), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$DilomRev) - sd(final_data$DilomRev), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$DilomRev) + (2 * sd(final_data$DilomRev)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$DilomRev) - (2 * sd(final_data$DilomRev)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$DilomRev) + (3 * sd(final_data$DilomRev)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$DilomRev) - (3 * sd(final_data$DilomRev)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$DilomRev), color = "red", linewidth = 1.5) + scale_y_continuous("Count", breaks = seq(0,15,1)) +   scale_x_continuous("Product Revenue (in millions of US Dollars)", breaks = seq(13,27,1)) 
+
+ggplot(final_data, aes(x = Week, y = DilomRev)) +
+  geom_hline(yintercept = mean(final_data$DilomRev) + (2 * sd(final_data$DilomRev)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$DilomRev) - (2 * sd(final_data$DilomRev)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$DilomRev), col = 'red', lwd = 1.5) +
+  geom_line(color = "black", size = 0.75) +
+  geom_point(color = "black", size = 2) +
+  scale_x_continuous(
+    breaks = seq(0,52,2)
+  ) +
+  scale_y_continuous(
+    breaks = seq(13,27,1)
+  ) +
+  labs(
+    title = "Dilomatox Weekly Product Revenue Line Chart",
+    x = "Week",
+    y = "Product Revenue (in millions of US Dollars)"
+  )
+
+favstats(final_data$DilomAdv)
+
+gf_histogram(~ DilomAdv, data = final_data, fill = "green", color = "black", linewidth = 0.5, bins = 12, title = "Dilomatox Weekly Advertising Expense Histogram with Boxplot Overlay") %>%
+  gf_boxplot(fill = "purple", width = 1, color = "black", linewidth = 1.5) %>%
+  gf_vline(xintercept = mean(final_data$DilomAdv) + sd(final_data$DilomAdv), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$DilomAdv) - sd(final_data$DilomAdv), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$DilomAdv) + (2 * sd(final_data$DilomAdv)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$DilomAdv) - (2 * sd(final_data$DilomAdv)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$DilomAdv) + (3 * sd(final_data$DilomAdv)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$DilomAdv) - (3 * sd(final_data$DilomAdv)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$DilomAdv), color = "red", linewidth = 1.5) + scale_y_continuous("Count", breaks = seq(0,15,1)) +   scale_x_continuous("Advertising and Marketing Expense (in millions of US Dollars)", breaks = seq(0.8,1.4,0.05))
+
+ggplot(final_data, aes(x = Week, y = DilomAdv)) +
+  geom_hline(yintercept = mean(final_data$DilomAdv) + (2 * sd(final_data$DilomAdv)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$DilomAdv) - (2 * sd(final_data$DilomAdv)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$DilomAdv), col = 'red', lwd = 1.5) +
+  geom_line(color = "black", size = 0.75) +
+  geom_point(color = "black", size = 2) +
+  scale_x_continuous(
+    breaks = seq(0,52,2)
+  ) +
+  scale_y_continuous(
+    breaks = seq(0.8,1.4,0.05)
+  ) +
+  labs(
+    title = "Dilomatox Weekly Advertising and Marketing Expenses Line Chart",
+    x = "Week",
+    y = "Advertising and Marketing Expense (in millions of US Dollars)"
+  )
+```
+```{r}
+# Descriptive Statistics for Zoraffil Weekly Product Revenues and Advertising Expenses
+favstats(final_data$ZorRev)
+
+gf_histogram(~ ZorRev, data = final_data, fill = "green", color = "black", linewidth = 0.5, bins = 12, title = "Zoraffil Weekly Product Revenue Histogram with Boxplot Overlay") %>%
+  gf_boxplot(fill = "purple", width = 1, color = "black", linewidth = 1.5) %>%
+  gf_vline(xintercept = mean(final_data$ZorRev) + sd(final_data$ZorRev), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$ZorRev) - sd(final_data$ZorRev), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$ZorRev) + (2 * sd(final_data$ZorRev)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$ZorRev) - (2 * sd(final_data$ZorRev)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$ZorRev) + (3 * sd(final_data$ZorRev)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$ZorRev) - (3 * sd(final_data$ZorRev)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$ZorRev), color = "red", linewidth = 1.5) + scale_y_continuous("Count", breaks = seq(0,15,1)) +   scale_x_continuous("Product Revenue (in millions of US Dollars)", breaks = seq(15,28,1)) 
+
+ggplot(final_data, aes(x = Week, y = ZorRev)) +
+  geom_hline(yintercept = mean(final_data$ZorRev) + (2 * sd(final_data$ZorRev)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$ZorRev) - (2 * sd(final_data$ZorRev)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$ZorRev), col = 'red', lwd = 1.5) +
+  geom_line(color = "black", size = 0.75) +
+  geom_point(color = "black", size = 2) +
+  scale_x_continuous(
+    breaks = seq(0,52,2)
+  ) +
+  scale_y_continuous(
+    breaks = seq(15,28,1)
+  ) +
+  labs(
+    title = "Zoraffil Weekly Product Revenue Line Chart",
+    x = "Week",
+    y = "Product Revenue (in millions of US Dollars)"
+  )
+
+favstats(final_data$ZorAdv)
+
+gf_histogram(~ ZorAdv, data = final_data, fill = "green", color = "black", linewidth = 0.5, bins = 12, title = "Zoraffil Weekly Advertising Expense Histogram with Boxplot Overlay") %>%
+  gf_boxplot(fill = "purple", width = 1, color = "black", linewidth = 1.5) %>%
+  gf_vline(xintercept = mean(final_data$ZorAdv) + sd(final_data$ZorAdv), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$ZorAdv) - sd(final_data$ZorAdv), color = "red", linetype = "dashed", linewidth = 1) %>%
+  gf_vline(xintercept = mean(final_data$ZorAdv) + (2 * sd(final_data$ZorAdv)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$ZorAdv) - (2 * sd(final_data$ZorAdv)), color = "red", linetype = "dashed", linewidth = 0.75) %>%
+  gf_vline(xintercept = mean(final_data$ZorAdv) + (3 * sd(final_data$ZorAdv)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$ZorAdv) - (3 * sd(final_data$ZorAdv)), color = "red", linetype = "dashed", linewidth = 0.5) %>%
+  gf_vline(xintercept = mean(final_data$ZorAdv), color = "red", linewidth = 1.5) + scale_y_continuous("Count", breaks = seq(0,15,1)) +   scale_x_continuous("Advertising and Marketing Expense (in millions of US Dollars)", breaks = seq(0.7,1.3,0.05))
+
+ggplot(final_data, aes(x = Week, y = ZorAdv)) +
+  geom_hline(yintercept = mean(final_data$ZorAdv) + (2 * sd(final_data$ZorAdv)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$ZorAdv) - (2 * sd(final_data$ZorAdv)), col = 'red', lwd = 0.75, lty = 2) +
+  geom_hline(yintercept = mean(final_data$ZorAdv), col = 'red', lwd = 1.5) +
+  geom_line(color = "black", size = 0.75) +
+  geom_point(color = "black", size = 2) +
+  scale_x_continuous(
+    breaks = seq(0,52,2)
+  ) +
+  scale_y_continuous(
+    breaks = seq(0.7,1.3,0.05)
+  ) +
+  labs(
+    title = "Zoraffil Weekly Advertising and Marketing Expenses Line Chart",
+    x = "Week",
+    y = "Advertising and Marketing Expense (in millions of US Dollars)"
+  )
+```
+##1. Describe the relationship between advertising and revenue for Dilomatox.  Would you characterize these relationships as strong or weak? Support your response with relevant graphs and statistics.
+```{r}
+cor.test(DilomRev ~ DilomAdv, data = final_data)
+```
+```{r, echo=FALSE}
+ggplot(
+  final_data,
+  aes(
+    x = DilomAdv,
+    y = DilomRev
+  )
+) +
+  geom_point(
+    color = "blue",
+    size = 2,
+    shape = 16
+  ) +
+  scale_x_continuous(
+    breaks = seq(0.8,1.4,0.05)  
+  ) +
+  scale_y_continuous(
+    breaks = seq(15,25,1)
+  ) +
+  coord_cartesian(
+    xlim = c(0.8,1.4),
+    ylim = c(15,25)
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = FALSE,
+    color = "red"
+  ) +
+  labs(
+    title = "Dilomatox Weekly Product Revenues To Advertising Expenses Scatterplot",
+    x = "Advertising and Marketing Expense (in millions)",
+    y = "Product Revenue (in millions)"
+  )
+
+```
+##2. Describe the pairwise relationship between advertising and revenue for Zoraffil.  Would you characterize these relationships as strong or weak? Support your response with relevant graphs and statistics. Hint: Conduct correlation analysis
+
+```{r}
+cor.test(ZorRev ~ ZorAdv, data = final_data)
+```
+```{r, echo=FALSE}
+ggplot(
+  final_data,
+  aes(
+    x = ZorAdv,
+    y = ZorRev
+  )
+) +
+  geom_point(
+    color = "blue",
+    size = 2,
+    shape = 16
+  ) +
+  scale_x_continuous(
+    breaks = seq(0.7,1.3,0.05)  
+  ) +
+  scale_y_continuous(
+    breaks = seq(15,28,1)
+  ) +
+  coord_cartesian(
+    xlim = c(0.7,1.3),
+    ylim = c(15,28)
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = FALSE,
+    color = "red"
+  ) +
+  labs(
+    title = "Zoraffil Weekly Product Revenues To Advertising Expenses Scatterplot",
+    x = "Advertising and Marketing Expense (in millions)",
+    y = "Product Revenue (in millions)"
+  )
+
+```
+```{r}
+t.test(final_data$DilomRev, final_data$ZorRev, paired = FALSE, alternative = "two.sided", var.equal = FALSE, conf.level = 0.95)
+```
+```{r}
+boxplot(final_data$DilomRev, final_data$ZorRev, vertical = TRUE, col = "lightblue", border = "darkblue", outpch = 21, outbg = "darkblue", linewidth = 0.25, main = "Dilomatox and Zoraffil Weekly Product Revenue Boxplots", at = c(1,2), names = c("Dilomatox","Zoraffil"), yaxt = "n")
+axis(2, at = seq(13, 28, 1), las = 2, cex.axis=0.75)
+mtext("Revenue (in millions of US Dollars)", side=2, line=2, cex=1.2)
+```
+```{r}
+boxplot(final_data$DilomAdv, final_data$ZorAdv, vertical = TRUE, col = "lightblue", border = "darkblue", outpch = 21, outbg = "darkblue", linewidth = 0.25, main = "Dilomatox and Zoraffil Weekly Advertising Expenses Boxplots", at = c(1,2), names = c("Dilomatox","Zoraffil"), yaxt = "n")
+axis(2, at = seq(0.7, 1.4, 0.05), las = 2, cex.axis=0.75)
+mtext("Expenses (in millions of US Dollars)", side=2, line=2.5, cex=1.2)
+```
+```{r}
+ggplot() +
+  geom_line(aes(x=final_data$Week, y=final_data$DilomRev, colour = "Dilomatox"), linewidth = 1) +
+  geom_line(aes(x=final_data$Week, y=final_data$ZorRev, colour = "Zoraffil"), linewidth = 1) +
+  scale_x_continuous(
+    breaks = seq(0,52,2)
+  ) +
+  scale_y_continuous(
+    breaks = seq(13,28,1)
+  ) +
+  labs(
+    title = "Dilomatox and Zoraffil Weekly Product Revenues Line Chart",
+    x = "Week",
+    y = "Product Revenue (in millions of US Dollars)"
+  )
+```
+```{r}
+ggplot() +
+  geom_line(aes(x=final_data$Week, y=final_data$DilomAdv, colour = "Dilomatox"), linewidth = 1) +
+  geom_line(aes(x=final_data$Week, y=final_data$ZorAdv, colour = "Zoraffil"), linewidth = 1) +
+  scale_x_continuous(
+    breaks = seq(0,52,2)
+  ) +
+  scale_y_continuous(
+    breaks = seq(0.6,1.3,0.05)
+  ) +
+  labs(
+    title = "Dilomatox and Zoraffil Weekly Advertising Expenses Line Chart",
+    x = "Week",
+    y = "Advertising Expenses (in millions of US Dollars)"
+  )
+```
+
+##3. Analyze the multivariate relationship between Dilomatox’s revenue and the other variables provided (Dilomatox’s marketing spend, Zoraffil’s revenue, and Zorafill’s marketing spend).  Is there a significant relationship between Dilomatox’s sales and any (or all) of these variables? Support your response with relevant charts or statistics. What percent of the variation in revenue does advertising and marketing spend explain for both brands? Explain. Hint: conduct multiple linear regression and interpret it.
+
+```{r}
+cor(final_data)
+```
+```{r}
+Dilom_model <- lm(DilomRev ~ DilomAdv, data = final_data)
+Dilom_model
+supernova(Dilom_model)
+confint(Dilom_model)
+```
+$$
+Y_i = b_0 + b_1(X_i) + e_i
+$$
+
+$$
+DilomRev_i = 0.7432 + 17.9382(DilomAdv_i) + e_i
+$$
+```{r}
+Zor_model <- lm(ZorRev ~ ZorAdv, data = final_data)
+Zor_model
+supernova(Zor_model)
+confint(Zor_model)
+```
+$$
+Y_i = b_0 + b_1(X_i) + e_i
+$$
+
+$$
+ZorRev_i = 10.38 + 11.50(ZorAdv_i) + e_i
+$$
+
+
