@@ -2,7 +2,7 @@
 
 **Author:** Randall C. Crawford
 
-This repository contains coursework completed for **ANA 605: Analytic Models & Data Systems**, a graduate-level course focused on building, evaluating, and comparing statistical models using real data and R Studio.
+This repository contains coursework completed for **ANA 605: Analytic Models & Data Systems**, a graduate-level course focused on building, evaluating, and comparing statistical models using datasets and R Studio.
 
 The course emphasized **how and why models work**, with particular attention to **variation, error, sampling, and inference**, rather than treating analytics as a black-box exercise.
 
